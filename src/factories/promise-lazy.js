@@ -1,5 +1,11 @@
 import lazy from '../utils/lazy-value'
 
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
 export default function (loadGmapApi, GmapApi) {
   return function promiseLazyCreator (options) {
     // Things to do once the API is loaded
@@ -14,10 +20,11 @@ export default function (loadGmapApi, GmapApi) {
         if (typeof window === 'undefined') { // server side -- never resolve this promise
           return new Promise(() => {}).then(onApiLoaded)
         } else {
+          const nonceCookie = options.nonceCookie ? getCookie(options.nonceCookie) : undefined
           return new Promise((resolve, reject) => {
             try {
               window.vueGoogleMapsInit = resolve
-              loadGmapApi(options.load, options.loadCn)
+              loadGmapApi(options.load, options.loadCn, nonceCookie)
             } catch (err) {
               reject(err)
             }

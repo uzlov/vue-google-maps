@@ -30,7 +30,7 @@
 export default (() => {
   let isApiSetUp = false
 
-  return (options, loadCn) => {
+  return (options, loadCn, nonceCookie) => {
     if (typeof document === 'undefined') {
       // Do nothing if run from server-side
       return
@@ -71,6 +71,7 @@ export default (() => {
       googleMapScript.setAttribute('src', url)
       googleMapScript.setAttribute('async', '')
       googleMapScript.setAttribute('defer', '')
+      if (nonceCookie) googleMapScript.setAttribute('nonce', nonceCookie)
       document.head.appendChild(googleMapScript)
     } else {
       throw new Error('You already started the loading of google maps')
